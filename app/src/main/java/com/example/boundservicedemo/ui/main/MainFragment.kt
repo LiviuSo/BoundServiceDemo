@@ -59,6 +59,7 @@ class MainFragment : Fragment() {
             mService.resetTask()
             mButton.text = "Start"
             mProgressBar.progress = 0
+            mTextView.text = "0%"
         } else {
             if (mService.mIsPaused) {
                 mService.unPausePretendLongRunningTask()
@@ -121,17 +122,17 @@ class MainFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         startService()
+        bindService()
     }
 
-    override fun onStop() {
-        super.onStop()
-        requireContext().unbindService(mViewModel.serviceConnection)
+    override fun onPause() {
+        super.onPause()
+        unbindService()
     }
 
     private fun startService() {
         val serviceIntent = Intent(requireContext(), ProgressService::class.java)
         requireContext().startService(serviceIntent)
-        bindService()
     }
 
     private fun bindService() {
@@ -139,5 +140,8 @@ class MainFragment : Fragment() {
         requireContext().bindService(serviceBindIntent, mViewModel.serviceConnection, Context.BIND_AUTO_CREATE)
     }
 
+    private fun unbindService() {
+        requireContext().unbindService(mViewModel.serviceConnection)
+    }
 
 }
